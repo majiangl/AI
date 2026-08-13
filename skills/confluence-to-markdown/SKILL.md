@@ -1,0 +1,67 @@
+---
+name: confluence-to-markdown
+description: Converts a Confluence page to Markdown. Use when asked to convert or read a Confluence page.
+---
+
+## Goal
+
+Convert a Confluence page to Markdown, preserving all text content (including
+PlantUML diagrams) and replacing non-text content (images, media) with inline
+placeholders.
+
+## Prerequisites
+
+Notify the user if any of the following are unmet:
+
+- Atlassian MCP server is configured.
+
+## Input
+
+- **Confluence page** — full URL or bare page ID (e.g. `6503628991`).
+- **Save location** — optional output path.
+
+## Process
+
+### 1. Fetch the Page
+
+Call the Atlassian `getConfluencePage` tool with content format **ADF** and
+`cloudId` set to the site hostname (e.g. `strategyagile.atlassian.net`). If
+the `cloudId` is unknown or rejected, call `getAccessibleAtlassianResources`
+to list available cloud IDs.
+
+> For large pages, the tool saves the full JSON payload to a file and returns
+> its path. Pass that path as `<adf_json_path>` — no reassembly needed.
+
+### 2. Convert ADF to Markdown
+
+Run [convert.py](./convert.py):
+
+```bash
+python3 <path-to-convert.py> <adf_json_path> <output_md_path>
+```
+
+> If the conversion reports any `UNSUPPORTED` warnings, inspect the ADF,
+> create a temporary copy of the script, add handlers for those node types,
+> and re-run the conversion with the copy. Do **not** modify the bundled
+> script.
+
+#### Save Location
+
+1. Use the user-specified path if provided.
+2. Otherwise, save as `<kebab-case-page-title>.md` in the session temporary
+   folder (e.g. `"Support Manage Access for MTDI/OLAP cubes"` →
+   `support-manage-access-for-mtdi-olap-cubes.md`).
+
+### 3. Review the Markdown
+
+Work through the Markdown and resolve every checklist item:
+
+- [ ] **Typos and grammar** — fix every spelling and grammar error, including
+      inside tables.
+- [ ] **Broken formatting** — fix syntax errors and broken formatting
+      introduced during conversion.
+
+## Output
+
+- Path of the created Markdown file.
+- Brief summary of omitted media/extensions, fix-ups, and patched logic.
