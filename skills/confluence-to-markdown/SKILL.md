@@ -1,6 +1,7 @@
 ---
 name: confluence-to-markdown
-description: Converts a Confluence page to Markdown. Use when asked to convert or read a Confluence page.
+description: Converts a Confluence page to Markdown. Always use this skill when asked
+  to convert, read, or understand a Confluence page.
 ---
 
 ## Goal
@@ -11,13 +12,13 @@ placeholders.
 
 ## Prerequisites
 
-Notify the user if any of the following are unmet:
+Stop and notify the user if any of the following are unmet:
 
-- Atlassian MCP server is configured.
+- [ ] Atlassian MCP server configured.
 
 ## Input
 
-- **Confluence page** — full URL or bare page ID (e.g. `6503628991`).
+- **Confluence page** — full URL or plain page ID (e.g. `6503628991`).
 - **Save location** — optional output path.
 
 ## Process
@@ -41,9 +42,8 @@ python3 <path-to-convert.py> <adf_json_path> <output_md_path>
 ```
 
 > If the conversion reports any `UNSUPPORTED` warnings, inspect the ADF,
-> create a temporary copy of the script, add handlers for those node types,
-> and re-run the conversion with the copy. Do **not** modify the bundled
-> script.
+> copy the script, patch the copy to handle those node types, and re-run the
+> conversion with the patched copy. Do **NOT** modify the bundled script.
 
 #### Save Location
 

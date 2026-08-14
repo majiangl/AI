@@ -1,19 +1,14 @@
 ---
 name: fix-defect
-description: Fixes a defect tracked by a Jira ticket. Use when asked to fix a bug, defect, or issue referenced by a Jira ticket ID (e.g. PROJ-123).
+description: Fixes a defect tracked by a Jira ticket. Use when asked to fix a bug,
+  defect, or issue referenced by a Jira ticket ID (e.g. PROJ-123).
 ---
-
-## When to Use This Skill
-
-Use when the user provides a Jira ticket ID or URL and asks you to fix the defect.
-This skill is a **general-purpose workflow** — it works in any repository.
-
-**DO NOT use when** the user only wants investigation without code changes, or
-when a repository-specific fix skill is available and more appropriate.
 
 ## Prerequisites
 
-Notify the user if the Atlassian MCP server is not configured.
+Stop and notify the user if any of the following are unmet:
+
+- [ ] Atlassian MCP server configured.
 
 ## Input
 
@@ -22,12 +17,12 @@ Notify the user if the Atlassian MCP server is not configured.
 
 ## Process
 
+### 1. Collect Defect Information
+
 > To fetch a Jira ticket, call the Atlassian `getJiraIssue` tool with `cloudId`
 > set to the site hostname (e.g. `strategyagile.atlassian.net`). If the
 > `cloudId` is unknown or the request is rejected, call
 > `getAccessibleAtlassianResources` to list available cloud IDs.
-
-### 1. Collect Defect Information
 
 1. Fetch the ticket and review:
    - Title, description, and status
@@ -36,7 +31,7 @@ Notify the user if the Atlassian MCP server is not configured.
    - Comments — may contain investigation notes; treat them as hints, not
      ground truth.
 2. Read the parent ID from the ticket. If a parent ticket exists, fetch it and
-   repeat until the hierarchy is exhausted.
+   repeat until no more parents remain.
 3. Build a consolidated view: lower-level tickets take precedence; parents
    provide broader context.
 
@@ -47,7 +42,7 @@ Notify the user if the Atlassian MCP server is not configured.
 
 1. If reproduction steps are insufficient, ask the user for clarification.
 2. Follow the reproduction steps to observe the failure.
-3. Capture error messages, stack traces, and any unexpected behaviour.
+3. Capture error messages, stack traces, and any unexpected behavior.
 
 ### 3. Identify the Root Cause
 
@@ -57,7 +52,7 @@ Notify the user if the Atlassian MCP server is not configured.
 Classify where the root cause resides:
 
 - **External** (in other packages or services outside this repo): stop and
-  summarise findings.
+  summarize findings.
 - **Internal** (inside this repo): proceed to the fix.
 
 ### 4. Rubber Duck Review
@@ -77,7 +72,8 @@ rubber duck:
 
 - Prefer general solutions that eliminate design flaws over fixes that only
   patch the current case.
-- Add comments for non-obvious logic; keep self-explanatory code comment-free.
+- Add comments for non-obvious logic.
+- Keep self-explanatory code comment-free.
 
 **Acceptance criteria:**
 

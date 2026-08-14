@@ -4,7 +4,7 @@ A collection of custom AI agent skills.
 
 ## Installation
 
-Clone the repo, then run the install script to symlink all skills into a destination folder.
+Clone the repo, then run the installation script to symlink all skills into a destination folder.
 
 **macOS / Linux**
 ```bash
@@ -32,5 +32,5 @@ install.ps1   # Install script for Windows
 |------------------------|--------------------------------------------------------------------|----------|
 | confluence-to-markdown | Converts a Confluence page to Markdown.                            | `Stable` |
 | fix-defect             | Fixes a defect tracked by a Jira ticket.                           | `Beta`   |
-| frontend-implement     | Implements a frontend feature design described in a Markdown file. | `Alpha`  |
+| implement-design       | Implements a feature from a design document referenced by a Confluence page or a Markdown file. | `Alpha`  |
 | polish-docs            | Polishes documents to ensure clear structure and fluent wording.   | `Stable` |

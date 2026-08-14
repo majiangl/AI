@@ -1,6 +1,8 @@
 ---
 name: polish-docs
-description: Polishes documents to ensure clear structure and fluent wording. Use when asked to polish, improve documentation, README files, technical writing, or any prose content.
+description: Polishes documents to ensure clear structure and fluent wording.
+  Use when asked to polish, improve documentation, README files, technical writing,
+  or any prose content.
 ---
 
 ## Goal
@@ -17,8 +19,8 @@ document in parallel.**
 
 ## Process
 
-1. **Understand the document** — identify its purpose, audience, and key
-   message before making any changes.
+1. **Understand the document** — identify its purpose, audience, and key message 
+   before making any changes.
 
 2. **Improve structure**
    - Ensure a logical flow: introduction → body → conclusion (or the
@@ -31,6 +33,9 @@ document in parallel.**
      sections — each section should address exactly one topic.
    - Use bullet points or numbered lists for enumerations of 3 or more items.
    - Use code blocks, tables, and callouts appropriately and consistently.
+   - Preserve structures that serve a purpose. A list with a single item may
+     exist for future extensibility — keep the list instead of collapsing it
+     into a sentence.
 
 3. **Improve wording**
    - Replace vague or wordy phrases with direct, precise language.
