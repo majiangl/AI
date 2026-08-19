@@ -55,9 +55,8 @@ Create a detailed implementation plan using a top-down approach:
 
 ### 4. Rubber Duck Review
 
-Verify the implementation by explaining it out loud, as if teaching a rubber
-duck. Walk through each code path to confirm the intended behavior is
-implemented, edge cases are handled, and tests cover the new code.
+Invoke the `rubber-duck` agent (or an equivalent rubber duck process) to review the
+implementation plan and the code changes. Address any issues raised.
 
 ## Output
 
