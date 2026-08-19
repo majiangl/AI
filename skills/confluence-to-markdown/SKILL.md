@@ -6,14 +6,12 @@ description: Converts a Confluence page to Markdown. Always use this skill when 
 
 ## Goal
 
-Convert a Confluence page to Markdown, preserving all text content (including
-PlantUML diagrams) and replacing non-text content (images, media) with inline
-placeholders.
+Convert a Confluence page to Markdown, preserving all text content (including PlantUML
+diagrams) and replacing non-text content (images, media) with inline placeholders.
 
 ## Prerequisites
 
 Stop and notify the user if any of the following are unmet:
-
 - [ ] Atlassian MCP server configured.
 
 ## Input
@@ -25,10 +23,9 @@ Stop and notify the user if any of the following are unmet:
 
 ### 1. Fetch the Page
 
-Call the Atlassian `getConfluencePage` tool with content format **ADF** and
-`cloudId` set to the site hostname (e.g. `strategyagile.atlassian.net`). If
-the `cloudId` is unknown or rejected, call `getAccessibleAtlassianResources`
-to list available cloud IDs.
+Call the Atlassian `getConfluencePage` tool with content format **ADF** and `cloudId`
+set to the site hostname. If the `cloudId` is unknown or the request fails, call
+`getAccessibleAtlassianResources` to list the available cloud IDs.
 
 > For large pages, the tool saves the full JSON payload to a file and returns
 > its path. Pass that path as `<adf_json_path>` — no reassembly needed.
@@ -55,7 +52,6 @@ python3 <path-to-convert.py> <adf_json_path> <output_md_path>
 ### 3. Review the Markdown
 
 Work through the Markdown and resolve every checklist item:
-
 - [ ] **Typos and grammar** — fix every spelling and grammar error, including
       inside tables.
 - [ ] **Broken formatting** — fix syntax errors and broken formatting

@@ -28,9 +28,9 @@ install.ps1   # Install script for Windows
 
 ## Skills
 
-| Skill                  | Description                                                        | Status   |
-|------------------------|--------------------------------------------------------------------|----------|
-| confluence-to-markdown | Converts a Confluence page to Markdown.                            | `Stable` |
-| fix-defect             | Fixes a defect tracked by a Jira ticket.                           | `Beta`   |
-| implement-design       | Implements a feature from a design document referenced by a Confluence page or a Markdown file. | `Alpha`  |
-| polish-docs            | Polishes documents to ensure clear structure and fluent wording.   | `Stable` |
+| Skill                  | Description                                                                                      | Status     |
+|------------------------|--------------------------------------------------------------------------------------------------|------------|
+| confluence-to-markdown | Converts a Confluence page to Markdown.                                                          | `Stable`   |
+| fix-defect             | Fixes a defect tracked by a Jira ticket.                                                         | `Beta`     |
+| implement-design       | Implements a feature from a design document referenced by a Confluence page or a Mark down file. | `Alpha`    |
+| polish-docs            | Polishes documents to ensure clear structure and fluent wording.                                 | `Beta`     |
