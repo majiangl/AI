@@ -19,7 +19,7 @@ document in parallel.**
 
 ## Process
 
-1. **Understand the document** — identify its purpose, audience, and key message 
+1. **Understand the document** — identify its purpose, audience, and key message
    before making any changes.
 
 2. **Improve structure**
@@ -34,10 +34,13 @@ document in parallel.**
    - Use bullet points or numbered lists for enumerations of 3 or more items.
    - Use code blocks, tables, and callouts appropriately and consistently.
    - Preserve structures that serve a purpose. A list with a single item may
-     exist for future extensibility — keep the list instead of collapsing it
+     exist for future extensibility — keep the list rather than collapsing it
      into a sentence.
 
 3. **Improve wording**
+   - Rewrite incoherent sentences — split run-ons, rejoin fragments, and
+     rearrange phrases that are confusing or hard to follow so they read
+     clearly while keeping the original meaning.
    - Replace vague or wordy phrases with direct, precise language.
    - Use active voice wherever possible (e.g. "The function returns X",
      not "X is returned by the function").

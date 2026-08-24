@@ -4,6 +4,12 @@ description: Fixes a defect tracked by a Jira ticket. Use when asked to fix a bu
   defect, or issue referenced by a Jira ticket ID (e.g. PROJ-123).
 ---
 
+## Goal
+
+Fix the defect described in the Jira ticket, working interactively and inviting the
+user's guidance and feedback at key steps. Depending on the defect, either fix it
+directly or investigate and report the root cause.
+
 ## Prerequisites
 
 Stop and notify the user if any of the following are unmet:
@@ -20,7 +26,7 @@ Stop and notify the user if any of the following are unmet:
 
 1. Fetch the ticket with the Atlassian `getJiraIssue` tool, setting `cloudId` to the
    site hostname. If the `cloudId` is unknown or the request fails, call
-   `getAccessibleAtlassianResources` to list the available cloud IDs. Request the 
+   `getAccessibleAtlassianResources` to list the available cloud IDs. Request the
    following fields:
    - Title, description, and status
    - Comments (may contain investigation notes; treat them as hints, not ground truth)
@@ -31,17 +37,19 @@ Stop and notify the user if any of the following are unmet:
 4. If a fix already exists, ask the user how to proceed (e.g. review and verify,
    amend, or start over from scratch) instead of assuming.
 
-### 2. Identify the Root Cause
+### 2. Investigate the Root Cause
 
-Reproduce the defect and collect debug information (logs, stack traces, network requests)
-before analyzing code — it is more efficient to narrow down the root cause this way.
+1. Start with the **Reproduce** step, since it helps narrow down the root cause quickly.
+2. Analyze the code to identify the root cause.
+3. Ask the user for guidance promptly if progress stalls after code analysis; the user
+   may have additional context or knowledge that can help.
 
 **If the root cause is external (e.g. in a package or service outside this repo),
 summarize findings and stop.**
 
-#### How to Reproduce
+#### Reproduce
 
-> Prefer reproduction in a dev environment, since it allows quick verification of a fix.
+> Prefer reproduction in a dev environment since it allows quick verification of a fix.
 > Without such verification, the fix cannot be confirmed.
 
 1. Ask the user whether to reproduce the defect in a dev environment.
@@ -49,6 +57,9 @@ summarize findings and stop.**
 3. If a dev environment is unavailable, fall back to the reporter's environment
    if provided in the Jira ticket.
 4. Otherwise, skip reproduction.
+
+Collect any information that can help narrow down the root cause, such as logs, stack
+traces, network requests, and screenshots.
 
 ### 3. Fix and Verify
 
