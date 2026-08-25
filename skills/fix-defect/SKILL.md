@@ -6,9 +6,8 @@ description: Fixes a defect tracked by a Jira ticket. Use when asked to fix a bu
 
 ## Goal
 
-Fix the defect described in the Jira ticket, working interactively and inviting the user's
-guidance and feedback at key steps. Depending on the defect, either fix it directly or
-investigate and report the root cause.
+Investigate and fix the defect described in the Jira ticket, involving the user early to avoid
+wasted effort. End with a fix, or with a clear conclusion about the root cause or the fix.
 
 ## Prerequisites
 
@@ -31,45 +30,57 @@ Stop and notify the user if any of the following are unmet:
    - Comments (may contain investigation notes; treat them as hints, not ground truth)
    - Parent
 2. If the ticket has a parent, fetch it and repeat until no further parents remain.
-3. Build a consolidated view: lower-level tickets take precedence; parents provide broader context.
-4. If a fix already exists, ask the user how to proceed (e.g., review and verify, amend, or start
-   over from scratch) instead of assuming.
+3. Build a consolidated view in which lower-level tickets take precedence and parents provide
+   broader context.
 
-### 2. Investigate the Root Cause
+### 2. Identify the Root Cause
 
-1. Start with the **Reproduce** step, since it helps narrow down the root cause quickly.
-2. Analyze the code to identify the root cause.
-3. Ask the user for guidance promptly if progress stalls after code analysis; the user may have
-   additional context or knowledge that can help.
+Reproduction narrows down the root cause efficiently. Reproduce the defect first, collect
+information (such as logs, stack traces, network requests, and screenshots), and then identify
+the root cause.
 
-**If the root cause is external (e.g., in a package or service outside this repo), summarize 
-findings and stop.**
+When reproducing, prefer to reproduce and verify against the source code. If you don't know how
+to reproduce the defect and verify the fix locally or in a dev environment, ask the user to
+provide those details. Meanwhile, offer these options:
+- Skip reproduction and verification locally.
+- Reproduce only in the given test environment without verification.
+- Skip reproduction and verification entirely.
 
-#### Reproduce
+#### Stop Gate
+- If a fix already exists, stop and summarize the root cause and the fix.
+- If the defect is not related to the current repo, stop and suggest a different repo to investigate.
 
-> Prefer reproduction in a dev environment since it allows quick verification of a fix. Without 
-> such verification, the fix cannot be confirmed.
+#### Escalate to the User When Stalled
 
-1. Ask the user whether to reproduce the defect in a dev environment.
-2. If yes, ask how to reproduce the defect in a dev environment.
-3. If a dev environment is unavailable, fall back to the reporter's environment if provided in
-   the Jira ticket.
-4. Otherwise, skip reproduction.
+The user may hold context you cannot get from code (ticket history, cross-repo knowledge,
+environment details, intended design). Involve them as soon as progress stalls; do NOT push
+through alone. Treat any of the following as a stall:
 
-Collect any information that can help narrow down the root cause, such as logs, stack traces,
-network requests, and screenshots.
+- The root cause is unknown after 2–3 investigation passes, or analysis yields only hypotheses.
+- Fixing the defect requires changing code outside this repo (another module/team owns it).
+- The intended mechanism is ambiguous and multiple plausible fixes exist.
+- Reproduction requires a live environment you cannot access.
+- The chosen fix hits an unexpected blocker (e.g., a workaround being investigated turns out
+  not to work), or a cross-repo dependency on an unfixed part.
+
+When stalled, stop working and prompt the user immediately. Present:
+- What you found so far (root-cause hypothesis or the blocker).
+- The decision needed, with concrete options (recommend one). Include a "type your own
+  answer" path so the user can supply missing context.
+- What you will do for each option.
+
+Re-ask if a new stall appears after the user's guidance. Never silently proceed past a stall.
 
 ### 3. Fix and Verify
 
 Make minimal changes following these principles:
 - Prefer general solutions that eliminate design flaws over narrow patches that address only the
   current case.
-- Comment non-obvious logic; leave self-explanatory code comment-free.
+- Add comments to non-obvious logic; leave self-explanatory code uncommented.
 
 Verify the fix:
 1. Run the relevant tests and lint.
-2. When a dev environment is available, re-run the reproduction steps and confirm the defect is 
-   gone.
+2. Re-run the reproduction steps and confirm, when possible, that the defect is gone.
 
 ### 4. Rubber Duck Review
 
