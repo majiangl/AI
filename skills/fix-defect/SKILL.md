@@ -7,7 +7,7 @@ description: Fixes a defect tracked by a Jira ticket. Use when asked to fix a bu
 ## Goal
 
 Investigate and fix the defect described in the Jira ticket, involving the user early to avoid
-wasted effort. End with a fix, or with a clear conclusion about the root cause or the fix.
+wasted effort. End with a fix, or a clear conclusion about the root cause or the fix.
 
 ## Prerequisites
 
@@ -35,14 +35,16 @@ Stop and notify the user if any of the following are unmet:
 
 ### 2. Identify the Root Cause
 
-Reproduction narrows down the root cause efficiently. Reproduce the defect first, collect
-information (such as logs, stack traces, network requests, and screenshots), and then identify
-the root cause.
+#### Reproduce the Defect
 
-When reproducing, prefer to reproduce and verify against the source code. If you don't know how
-to reproduce the defect and verify the fix locally or in a dev environment, ask the user to
-provide those details. Meanwhile, offer these options:
-- Skip reproduction and verification locally.
+Reproducing the defect is the fastest way to narrow down the root cause. Reproduce it first,
+collect information (such as logs, stack traces, network requests, and screenshots), and then 
+identify the root cause.
+
+When reproducing, prefer a live environment since it lets you verify the fix. If you don't
+know how to reproduce and verify in a live environment, ask the user to provide those details
+and offer these options:
+- Skip reproduction and verification in a live environment.
 - Reproduce only in the given test environment without verification.
 - Skip reproduction and verification entirely.
 
@@ -57,16 +59,15 @@ environment details, intended design). Involve them as soon as progress stalls; 
 through alone. Treat any of the following as a stall:
 
 - The root cause is unknown after 2–3 investigation passes, or analysis yields only hypotheses.
-- Fixing the defect requires changing code outside this repo (another module/team owns it).
 - The intended mechanism is ambiguous and multiple plausible fixes exist.
 - Reproduction requires a live environment you cannot access.
 - The chosen fix hits an unexpected blocker (e.g., a workaround being investigated turns out
-  not to work), or a cross-repo dependency on an unfixed part.
+  not to work), or the fix depends on unfixed code in another repo.
 
 When stalled, stop working and prompt the user immediately. Present:
 - What you found so far (root-cause hypothesis or the blocker).
-- The decision needed, with concrete options (recommend one). Include a "type your own
-  answer" path so the user can supply missing context.
+- The decision needed, with concrete options (recommend one). Include a "type your own answer"
+  path so the user can supply missing context.
 - What you will do for each option.
 
 Re-ask if a new stall appears after the user's guidance. Never silently proceed past a stall.
