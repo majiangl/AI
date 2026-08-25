@@ -7,25 +7,26 @@ description: Fixes a defect tracked by a Jira ticket. Use when asked to fix a bu
 ## Goal
 
 Investigate and fix the defect described in the Jira ticket, involving the user early to avoid
-wasted effort. End with a fix, or a clear conclusion about the root cause or the fix.
+wasted effort. End with a fix, or a clear conclusion about the root cause and the fix.
 
 ## Prerequisites
 
-Stop and notify the user if any of the following are unmet:
+Stop and notify the user if any prerequisite is unmet:
 - [ ] The Atlassian MCP server is configured.
 
 ## Input
 
-- **Jira ticket** — a ticket ID (e.g. `PROJ-123`) or a full Jira URL.
-  Extract the ticket ID from the URL when a full URL is given.
+- **Jira ticket** — a ticket ID (e.g. `PROJ-123`) or a full Jira URL. Extract the ticket ID from
+  the URL when a full URL is given.
 
 ## Process
 
 ### 1. Collect Defect Information
 
 1. Fetch the ticket with the Atlassian `getJiraIssue` tool, setting `cloudId` to the site
-   hostname. If the `cloudId` is unknown or the request fails, call
-   `getAccessibleAtlassianResources` to list the available cloud IDs. Request the following fields:
+   hostname (extracted from the full Jira URL). If the `cloudId` is unknown or the request fails,
+   call `getAccessibleAtlassianResources` to list the available cloud IDs. Request the following
+   fields:
    - Title, description, and status
    - Comments (may contain investigation notes; treat them as hints, not ground truth)
    - Parent
@@ -35,34 +36,38 @@ Stop and notify the user if any of the following are unmet:
 
 ### 2. Identify the Root Cause
 
-#### Reproduce the Defect
+Reproducing the defect is the fastest way to narrow down the root cause. Follow this process to 
+identify the root cause:
+1. Reproduce the defect.
+2. Collect information (such as logs, stack traces, network requests, and screenshots).
+3. Identify the root cause.
 
-Reproducing the defect is the fastest way to narrow down the root cause. Reproduce it first,
-collect information (such as logs, stack traces, network requests, and screenshots), and then 
-identify the root cause.
+#### Reproduce
 
-When reproducing, prefer a live environment since it lets you verify the fix. If you don't
-know how to reproduce and verify in a live environment, ask the user to provide those details
-and offer these options:
-- Skip reproduction and verification in a live environment.
-- Reproduce only in the given test environment without verification.
-- Skip reproduction and verification entirely.
+The recommended way to reproduce is a live approach, which can also verify a potential fix. If
+the reproduction approach is unknown or ambiguous, ask the user the following questions (adjust
+the later questions based on the earlier answers):
+- Do you want to reproduce and verify using a live approach?
+- How should we reproduce and verify using the live approach?
+
+If the user does not want to use the live approach, fall back to reproducing the defect only if
+the ticket provides reproduction steps; optionally ask the user for more details. Skip
+reproduction if the ticket does not provide reproduction steps.
 
 #### Stop Gate
 - If a fix already exists, stop and summarize the root cause and the fix.
-- If the defect is not related to the current repo, stop and suggest a different repo to investigate.
+- If the defect is not related to the current repo, stop and suggest a different repo to
+  investigate.
 
 #### Escalate to the User When Stalled
 
 The user may hold context you cannot get from code (ticket history, cross-repo knowledge,
 environment details, intended design). Involve them as soon as progress stalls; do NOT push
 through alone. Treat any of the following as a stall:
-
-- The root cause is unknown after 2–3 investigation passes, or analysis yields only hypotheses.
+- The root cause cannot be identified because context or knowledge is lacking, or analysis
+  yields only hypotheses.
 - The intended mechanism is ambiguous and multiple plausible fixes exist.
-- Reproduction requires a live environment you cannot access.
-- The chosen fix hits an unexpected blocker (e.g., a workaround being investigated turns out
-  not to work), or the fix depends on unfixed code in another repo.
+- Cannot proceed for whatever reason.
 
 When stalled, stop working and prompt the user immediately. Present:
 - What you found so far (root-cause hypothesis or the blocker).

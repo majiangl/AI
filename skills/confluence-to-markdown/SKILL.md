@@ -23,9 +23,9 @@ Stop and notify the user if any of the following are unmet:
 
 ### 1. Fetch the Page
 
-Call the Atlassian `getConfluencePage` tool with `contentFormat` set to **ADF** and `cloudId`
-set to the site hostname. If the `cloudId` is unknown or the request fails, call
-`getAccessibleAtlassianResources` to list the available cloud IDs.
+Call the Atlassian `getConfluencePage` tool with `contentFormat` set to **ADF** and `cloudId` 
+set to the site hostname (extracted from the full Jira URL). If the `cloudId` is unknown or the 
+request fails, call `getAccessibleAtlassianResources` to list the available cloud IDs.
 
 > For large pages, the tool saves the full JSON payload to a file and returns its path. Pass
 > that path as `<adf_json_path>` — no reassembly needed.
