@@ -12,7 +12,7 @@ Stop and notify the user if any of the following are unmet:
 
 # Input
 
-- **Design document** — a Confluence page URL or page ID, or a path to a Markdown file 
+- **Design document** — a Confluence page URL or page ID, or a path to a Markdown file
   containing the design or specification to implement.
 
 # Process

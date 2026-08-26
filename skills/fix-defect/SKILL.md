@@ -16,17 +16,17 @@ Stop and notify the user if any prerequisite is unmet:
 
 # Input
 
-- **Jira ticket** — a ticket ID (e.g. `PROJ-123`) or a full Jira URL. Extract the ticket ID from
-  the URL when a full URL is given.
+- **Jira ticket** — a ticket ID (e.g. `PROJ-123`) or a full Jira URL (extract the ticket ID from
+  the URL when a full URL is given).
 
 # Process
 
 ## 1. Collect Defect Information
 
 1. Fetch the ticket with the Atlassian `getJiraIssue` tool, setting `cloudId` to the site
-   hostname (extract from the Jira URL if given). If the `cloudId` is unknown or the request fails,
-   call `getAccessibleAtlassianResources` to list the available cloud IDs. Request the following
-   fields:
+   hostname (extracted from the Jira URL when given). If the `cloudId` is unknown or the request
+   fails, call `getAccessibleAtlassianResources` to list the available cloud IDs. Request the
+   following fields:
    - Title, description, and status
    - Comments (may contain investigation notes; treat them as hints, not ground truth)
    - Parent
@@ -36,22 +36,21 @@ Stop and notify the user if any prerequisite is unmet:
 
 ## 2. Identify the Root Cause
 
-Reproducing the defect is the fastest way to narrow down the root cause. Follow this process:
+The fastest way to narrow down the root cause is to reproduce the defect. Follow this process:
 1. Reproduce the defect.
-2. Collect information (such as logs, stack traces, network requests, and screenshots).
+2. Collect information (logs, stack traces, network requests, screenshots).
 3. Identify the root cause.
 
 ### Reproduce
 
-The recommended way to reproduce is a live approach, which can also verify a potential fix. If
-the reproduction approach is unknown or ambiguous, ask the user the following questions (adjust
-the later questions based on the earlier answers):
-- Do you want to reproduce and verify using a live approach?
-- How should we reproduce and verify using the live approach?
+Reproducing live is the recommended approach because it can also verify a potential fix. If the
+live approach is unknown or ambiguous, ask the user (adjust the later questions based on the 
+earlier answers):
+- Whether to reproduce and verify using a live approach?
+- How to reproduce and verify using the live approach?
 
-If the user does not want to use the live approach, reproduce the defect only if the ticket
-provides reproduction steps; optionally ask the user for more details. Skip reproduction if the
-ticket does not provide reproduction steps.
+If the user declines the live approach, reproduce the defect only when the ticket provides
+reproduction steps (optionally asking the user for more details); otherwise skip reproduction.
 
 ### Stop Gate
 
@@ -71,8 +70,8 @@ through alone. Treat any of the following as a stall:
 
 When stalled, stop working and prompt the user immediately. Present:
 - What you found so far (root-cause hypothesis or the blocker).
-- The decision needed, with concrete options (recommend one). Include a "type your own answer"
-  path so the user can supply missing context.
+- The decision needed, with concrete options (recommend one) and a "type your own answer" path so
+  the user can supply missing context.
 - What you will do for each option.
 
 Re-ask whenever a new stall appears after the user's guidance. Never silently proceed past a
@@ -80,7 +79,9 @@ stall.
 
 ## 3. Fix and Verify
 
-Make minimal changes following these principles:
+When fixing:
+- List candidate solutions, compare solutions, and choose the most straightforward one that
+  follows the original design.
 - Prefer general solutions that eliminate design flaws over narrow patches that address only the
   current case.
 - Add comments to non-obvious logic; leave self-explanatory code uncommented.
@@ -92,7 +93,7 @@ Verify the fix:
 ## 4. Rubber Duck Review
 
 Invoke the `rubber-duck` agent (or an equivalent rubber duck process) to review:
-- Correctness of the root cause and the proposed fix.
+- The root cause and the proposed fix.
 - Regression risks and potential side effects.
 - Code quality, readability, and maintainability.
 
