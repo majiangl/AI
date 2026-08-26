@@ -4,18 +4,18 @@ description: Polishes documents to ensure clear structure and fluent wording. Us
   polish, improve documentation, README files, technical writing, or any prose content.
 ---
 
-## Goal
+# Goal
 
 Improve documents so each is clearly structured and fluent — without changing its meaning, 
 technical accuracy, or intent.
 
 **When multiple documents are provided, apply all process steps to each document in parallel.**
 
-## Input
+# Input
 
 - **Documents** — paths to the document files.
 
-## Process
+# Process
 
 1. **Understand the document** — identify its purpose, audience, and key message before making 
    any changes.
@@ -48,7 +48,7 @@ technical accuracy, or intent.
    - Do not add information that was not in the original.
    - Keep the author's voice where appropriate — this is a refinement, not a rewrite.
 
-## Output
+# Output
 
 - Changes applied directly to the documents.
 - A short summary of changes per document (e.g. "Merged duplicate sections on X", "Split 

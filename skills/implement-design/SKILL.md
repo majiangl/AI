@@ -4,20 +4,20 @@ description: Implements a feature from a design document referenced by a Conflue
   Markdown file. Use when asked to implement a design, feature, or specification.
 ---
 
-## Prerequisites
+# Prerequisites
 
 Stop and notify the user if any of the following are unmet:
 
 - [ ] Atlassian MCP server is configured (required only when the design is a Confluence page).
 
-## Input
+# Input
 
 - **Design document** — a Confluence page URL or page ID, or a path to a Markdown file 
   containing the design or specification to implement.
 
-## Process
+# Process
 
-### 1. Understand the Design
+## 1. Understand the Design
 
 > If the design is a Confluence page, convert it to Markdown first (e.g., with the 
 > `confluence-to-markdown` skill).
@@ -28,7 +28,7 @@ Read the design document:
    either by physical location (e.g., repo/npm package) or ownership.
 2. Determine what should be implemented in this repo.
 
-### 2. Plan the Implementation
+## 2. Plan the Implementation
 
 Create a detailed implementation plan using a top-down approach:
 
@@ -39,7 +39,7 @@ Create a detailed implementation plan using a top-down approach:
 3. Break the work into tasks, list the files and modules to touch, and note dependencies between 
    tasks.
 
-### 3. Implement the Code
+## 3. Implement the Code
 
 - Handle interaction between internal components. Update call sites and imports when a shared 
   interface or signature changes.
@@ -49,11 +49,11 @@ Create a detailed implementation plan using a top-down approach:
 - Add necessary comments. Explain non-obvious logic and business rules, not what the code 
   obviously does.
 
-### 4. Rubber Duck Review
+## 4. Rubber Duck Review
 
 Invoke the `rubber-duck` agent (or an equivalent rubber duck process) to review the 
 implementation plan and the code changes. Address any issues raised.
 
-## Output
+# Output
 
 - Summary of the implementation, including what was changed and how it was verified.
