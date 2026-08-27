@@ -1,7 +1,7 @@
 ---
 name: fix-defect
-description: Fixes a defect tracked by a Jira ticket or described in plain text. Use when asked to
-  fix a bug, defect, or issue.
+description: Fixes a defect either tracked by a Jira ticket or described in plain text. Use when 
+  asked to fix a bug, defect, or issue.
 ---
 
 # Goal
@@ -44,13 +44,13 @@ The fastest way to narrow down the root cause is to reproduce the defect. Follow
 
 ### Reproduce
 
-Reproducing live is the recommended approach because it can verify the fix. If the live approach
-is unknown or ambiguous, ask the user, adapting each question based on earlier answers:
+Reproducing live is the recommended approach because it lets you verify the fix. If the live
+approach is unknown or ambiguous, ask the user, adapting each question to earlier answers:
 - Should we reproduce and verify using a live approach?
 - How should we reproduce and verify using the live approach?
 
-If the user declines the live approach, fall back to reproducing the defect using the steps in the
-ticket, if any (asking the user for more details when needed); otherwise, skip reproduction.
+If the user declines the live approach, fall back to the reproduction steps in the ticket, if any
+(asking the user for more details when needed); otherwise, skip reproduction.
 
 ### Stop Gates
 
@@ -79,13 +79,13 @@ stall.
 
 ## 3. Fix and Verify
 
-Identify the candidate solutions and select one:
+Before finalizing the solution, compare the candidate solutions and select one:
 1. Prefer general fixes that eliminate the underlying design flaw over narrow patches that address
    only the current case.
 2. Among equally general options, choose the most straightforward fix that follows the original
    design.
 
-Implement the fix:
+When making the fix:
 - Comment non-obvious logic; leave self-explanatory code uncommented.
 
 Verify the fix:
@@ -94,8 +94,8 @@ Verify the fix:
 
 ## 4. Rubber Duck Review
 
-Invoke the `rubber-duck` agent (or an equivalent rubber duck process) to review:
-- The root cause and the proposed fix.
+Review the fix using the `rubber-duck` agent (or an equivalent rubber duck process) in the
+following aspects:
 - Regression risks and potential side effects.
 - Code quality, readability, and maintainability.
 

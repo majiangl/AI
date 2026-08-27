@@ -38,8 +38,6 @@ technical accuracy, or intent.
    - Replace vague or wordy phrases with direct, precise language.
    - Use active voice wherever possible (e.g. "The function returns X", not "X is returned by 
      the function").
-   - Eliminate redundant words and filler phrases (e.g. "basically", "in order to", "it should be 
-     noted that").
    - Use one term per concept consistently throughout the document.
    - Fix grammar, spelling, and punctuation errors.
 
