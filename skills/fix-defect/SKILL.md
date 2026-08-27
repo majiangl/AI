@@ -1,13 +1,13 @@
 ---
 name: fix-defect
-description: Fixes a defect tracked by a Jira ticket. Use when asked to fix a bug, defect, or
-   issue referenced by a Jira ticket ID (e.g. PROJ-123).
+description: Fixes a defect tracked by a Jira ticket or described in plain text. Use when asked to
+  fix a bug, defect, or issue.
 ---
 
 # Goal
 
-Investigate and fix the defect described in the Jira ticket, involving the user early to avoid
-wasted effort. End with a fix, or a clear conclusion about the root cause and the fix.
+Investigate and fix the given defect, involving the user when more details are needed or work
+stalls. Conclude with a fix, or a clear explanation of the root cause and why it cannot be fixed.
 
 # Prerequisites
 
@@ -16,23 +16,24 @@ Stop and notify the user if any prerequisite is unmet:
 
 # Input
 
-- **Jira ticket** — a ticket ID (e.g. `PROJ-123`) or a full Jira URL (extract the ticket ID from
-  the URL when a full URL is given).
+- **Defect ticket** — one of:
+  - A Jira ticket ID (e.g. `PROJ-123`)
+  - A full Jira URL (extract the ticket ID from the URL)
+  - A plain-text description of the defect
 
 # Process
 
 ## 1. Collect Defect Information
 
-1. Fetch the ticket with the Atlassian `getJiraIssue` tool, setting `cloudId` to the site
-   hostname (extracted from the Jira URL when given). If the `cloudId` is unknown or the request
-   fails, call `getAccessibleAtlassianResources` to list the available cloud IDs. Request the
-   following fields:
+If the defect is a Jira ticket:
+1. Fetch the ticket with the `getJiraIssue` tool, setting `cloudId` to the site hostname (extracted
+   from the Jira URL when given). If `cloudId` is unknown or the request fails, call
+   `getAccessibleAtlassianResources` to list available cloud IDs. Request these fields:
    - Title, description, and status
-   - Comments (may contain investigation notes; treat them as hints, not ground truth)
+   - Comments (may contain investigation notes — treat them as hints, not ground truth)
    - Parent
 2. If the ticket has a parent, fetch it and repeat until no further parents remain.
-3. Build a consolidated view: lower-level tickets take precedence, while parents provide broader
-   context.
+3. Build a consolidated view: lower-level tickets take precedence; parents provide broader context.
 
 ## 2. Identify the Root Cause
 
@@ -43,22 +44,21 @@ The fastest way to narrow down the root cause is to reproduce the defect. Follow
 
 ### Reproduce
 
-Reproducing live is the recommended approach because it can also verify a potential fix. If the
-live approach is unknown or ambiguous, ask the user (adjust the later questions based on the 
-earlier answers):
-- Whether to reproduce and verify using a live approach?
-- How to reproduce and verify using the live approach?
+Reproducing live is the recommended approach because it can verify the fix. If the live approach
+is unknown or ambiguous, ask the user, adapting each question based on earlier answers:
+- Should we reproduce and verify using a live approach?
+- How should we reproduce and verify using the live approach?
 
-If the user declines the live approach, reproduce the defect only when the ticket provides
-reproduction steps (optionally asking the user for more details); otherwise skip reproduction.
+If the user declines the live approach, fall back to reproducing the defect using the steps in the
+ticket, if any (asking the user for more details when needed); otherwise, skip reproduction.
 
-### Stop Gate
+### Stop Gates
 
-- If a fix already exists, stop and summarize the root cause and the fix.
-- If the defect is not related to the current repo, stop and suggest a different repo to
-  investigate.
+Stop and report if any of the conditions are met:
+- A fix already exists — summarize the root cause and the fix.
+- The defect is unrelated to the current repo — suggest the correct repo to investigate.
 
-### Escalate to the User When Stalled
+### Escalate When Stalled
 
 The user may hold context you cannot get from code (ticket history, cross-repo knowledge,
 environment details, intended design). Involve them as soon as progress stalls; do not push
@@ -68,23 +68,25 @@ through alone. Treat any of the following as a stall:
 - The intended mechanism is ambiguous and multiple plausible fixes exist.
 - Work cannot proceed for any other reason.
 
-When stalled, stop working and prompt the user immediately. Present:
-- What you found so far (root-cause hypothesis or the blocker).
-- The decision needed, with concrete options (recommend one) and a "type your own answer" path so
-  the user can supply missing context.
+When stalled, stop immediately and prompt the user with:
+- What you found so far (hypothesis or blocker).
+- The decision needed, with concrete options (recommend one) and an open path for the user to
+  supply missing context.
 - What you will do for each option.
 
-Re-ask whenever a new stall appears after the user's guidance. Never silently proceed past a
+Re-escalate whenever a new stall appears after the user's guidance. Never silently proceed past a
 stall.
 
 ## 3. Fix and Verify
 
-When fixing:
-- List candidate solutions, compare solutions, and choose the most straightforward one that
-  follows the original design.
-- Prefer general solutions that eliminate design flaws over narrow patches that address only the
-  current case.
-- Add comments to non-obvious logic; leave self-explanatory code uncommented.
+Identify the candidate solutions and select one:
+1. Prefer general fixes that eliminate the underlying design flaw over narrow patches that address
+   only the current case.
+2. Among equally general options, choose the most straightforward fix that follows the original
+   design.
+
+Implement the fix:
+- Comment non-obvious logic; leave self-explanatory code uncommented.
 
 Verify the fix:
 1. Run the relevant tests and lint.
