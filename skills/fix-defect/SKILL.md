@@ -1,13 +1,14 @@
 ---
 name: fix-defect
-description: Fixes a defect either tracked by a Jira ticket or described in plain text. Use when 
-  asked to fix a bug, defect, or issue.
+description: Fixes a defect tracked by a Jira ticket or described in plain text. Use when asked to
+  fix a bug, defect, or issue.
 ---
 
 # Goal
 
 Investigate and fix the given defect, involving the user when more details are needed or work
-stalls. Conclude with a fix, or a clear explanation of the root cause and why it cannot be fixed.
+stalls. Conclude with a fix, or with a clear explanation of the root cause and why it cannot be
+fixed.
 
 # Prerequisites
 
@@ -37,16 +38,19 @@ If the defect is a Jira ticket:
 
 ## 2. Identify the Root Cause
 
-The fastest way to narrow down the root cause is to reproduce the defect. Follow this process:
+Follow the steps to identify the root cause:
 1. Reproduce the defect.
 2. Collect information (logs, stack traces, network requests, screenshots).
 3. Identify the root cause.
+
+**Reproduce before analyzing code** — reproduction narrows down the root cause quickly and
+accurately.
 
 ### Reproduce
 
 Reproducing live is the recommended approach because it lets you verify the fix. If the live
 approach is unknown or ambiguous, ask the user, adapting each question to earlier answers:
-- Should we reproduce and verify using a live approach?
+- Should we reproduce and verify using the live approach?
 - How should we reproduce and verify using the live approach?
 
 If the user declines the live approach, fall back to the reproduction steps in the ticket, if any
@@ -79,7 +83,7 @@ stall.
 
 ## 3. Fix and Verify
 
-Before finalizing the solution, compare the candidate solutions and select one:
+Before finalizing the solution, compare candidate solutions and select one:
 1. Prefer general fixes that eliminate the underlying design flaw over narrow patches that address
    only the current case.
 2. Among equally general options, choose the most straightforward fix that follows the original
