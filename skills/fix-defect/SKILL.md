@@ -1,7 +1,7 @@
 ---
 name: fix-defect
 description: Investigates and fixes a reported bug/defect — from a Jira ticket, URL, or a
-  plain-text description. Use when asked to fix a bug, defect, or issue; not for new features or 
+  plain-text description. Use when asked to fix a bug, defect, or issue; not for new features or
   general refactors.
 ---
 
@@ -29,7 +29,7 @@ Stop and notify the user if any prerequisite is unmet:
 
 If the defect is a Jira ticket:
 1. Fetch the ticket with the `getJiraIssue` tool, setting `cloudId` to the site hostname (extracted
-   from the Jira URL when given). If `cloudId` is unknown or the request fails, call
+   from the Jira URL when provided). If `cloudId` is unknown or the request fails, call
    `getAccessibleAtlassianResources` to list available cloud IDs. Request these fields:
    - Title, description, and status
    - Comments (may contain investigation notes — treat them as hints, not ground truth)
@@ -39,13 +39,12 @@ If the defect is a Jira ticket:
 
 ## 2. Identify the Root Cause
 
-Work through these steps to identify the root cause:
+Work through these steps:
 1. Reproduce the defect.
-2. Collect information (logs, stack traces, network requests, screenshots).
+2. Collect information — logs, stack traces, network requests, screenshots.
 3. Identify the root cause.
 
-**Reproduce before analyzing code** — reproduction pinpoints the root cause quickly and
-accurately.
+**Reproduce before code analysis** — reproduction helps pinpoint the root cause efficiently.
 
 ### Reproduce
 
@@ -54,8 +53,8 @@ approach is unknown or ambiguous, ask the user, adapting each question based on 
 - Should we reproduce and verify using the live approach?
 - How should we reproduce and verify using the live approach?
 
-If the user declines the live approach, fall back to the reproduction steps in the ticket, if any
-(asking the user for more details when needed); otherwise, skip reproduction.
+If the user declines the live approach, follow the reproduction steps in the ticket (if any), asking
+the user for more details when needed; otherwise, skip reproduction.
 
 ### Stop Gates
 
@@ -84,20 +83,14 @@ stall.
 
 ## 3. Fix and Verify
 
-1. Identify at least two candidate solutions when more than one plausible approach exists (e.g. a
-   narrow patch vs. a general fix, or a local override vs. an upstream/design-level change). If
-   only one solution exists, skip the comparison.
-2. Compare candidates explicitly and choose one based on:
-   - Prefer general fixes that eliminate the underlying design flaw over narrow patches that
-     address only the current case.
+Work through these steps:
+1. Before making the fix, list candidate solutions and compare.
+2. Choose the most appropriate one based on:
    - Prefer robust, maintainable fixes over quick-fixes.
-   - Prefer straightforward fixes that follow the original design.
+   - Prefer fixes that follow the original design of the changing code.
    - Regression risk and blast radius of each option.
-3. Record the comparison in a short "Candidate Solutions" note (options considered, trade-offs,
-   why the chosen one won) — it must be surfaced to the user in the final Output, not just
-   reasoned about silently.
-4. Make the fix — comment non-obvious logic; leave self-explanatory code uncommented.
-5. Verify the fix:
+3. Make the fix — comment non-obvious logic; leave self-explanatory code uncommented.
+4. Verify the fix:
    - Run the relevant tests and lint.
    - Re-run the reproduction steps and confirm, when possible, that the defect is gone.
 
