@@ -1,7 +1,8 @@
 ---
 name: fix-defect
-description: Fixes a defect tracked by a Jira ticket or described in plain text. Use when asked to
-  fix a bug, defect, or issue.
+description: Investigates and fixes a reported bug/defect — from a Jira ticket, URL, or a
+  plain-text description. Use when asked to fix a bug, defect, or issue; not for new features or 
+  general refactors.
 ---
 
 # Goal
@@ -38,18 +39,18 @@ If the defect is a Jira ticket:
 
 ## 2. Identify the Root Cause
 
-Follow the steps to identify the root cause:
+Work through these steps to identify the root cause:
 1. Reproduce the defect.
 2. Collect information (logs, stack traces, network requests, screenshots).
 3. Identify the root cause.
 
-**Reproduce before analyzing code** — reproduction narrows down the root cause quickly and
+**Reproduce before analyzing code** — reproduction pinpoints the root cause quickly and
 accurately.
 
 ### Reproduce
 
 Reproducing live is the recommended approach because it lets you verify the fix. If the live
-approach is unknown or ambiguous, ask the user, adapting each question to earlier answers:
+approach is unknown or ambiguous, ask the user, adapting each question based on earlier answers:
 - Should we reproduce and verify using the live approach?
 - How should we reproduce and verify using the live approach?
 
@@ -58,7 +59,7 @@ If the user declines the live approach, fall back to the reproduction steps in t
 
 ### Stop Gates
 
-Stop and report if any of the following is met:
+Stop and report if either of the following is met:
 - A fix already exists — summarize the root cause and the fix.
 - The defect is unrelated to the current repo — suggest the correct repo to investigate.
 
@@ -81,30 +82,28 @@ When stalled, stop immediately and prompt the user with:
 Re-escalate whenever a new stall appears after the user's guidance. Never silently proceed past a
 stall.
 
-## 3. Figure Out the Fix
+## 3. Fix and Verify
 
-Follow the steps to figure out the fix:
-1. List candidate solutions, choose one based on the following criteria:
-    1. Prefer general fixes that eliminate the underlying design flaw over narrow patches that 
-       address only the current case.
-    2. Among equally general options, choose the most straightforward fix that follows the original
-       design.
-2. Make the fix:
-   - Comment non-obvious logic; leave self-explanatory code uncommented.
-3. Verify the fix:
-   1. Run the relevant tests and lint.
-   2. Re-run the reproduction steps and confirm, when possible, that the defect is gone.
-
-## 4. Rubber Duck Review
-
-Review the fix using the `rubber-duck` agent (or an equivalent rubber duck process) about:
-- Regression risks and potential side effects.
-- Code quality, readability, and maintainability.
-
-Address any issues raised.
+1. Identify at least two candidate solutions when more than one plausible approach exists (e.g. a
+   narrow patch vs. a general fix, or a local override vs. an upstream/design-level change). If
+   only one solution exists, skip the comparison.
+2. Compare candidates explicitly and choose one based on:
+   - Prefer general fixes that eliminate the underlying design flaw over narrow patches that
+     address only the current case.
+   - Prefer robust, maintainable fixes over quick-fixes.
+   - Prefer straightforward fixes that follow the original design.
+   - Regression risk and blast radius of each option.
+3. Record the comparison in a short "Candidate Solutions" note (options considered, trade-offs,
+   why the chosen one won) — it must be surfaced to the user in the final Output, not just
+   reasoned about silently.
+4. Make the fix — comment non-obvious logic; leave self-explanatory code uncommented.
+5. Verify the fix:
+   - Run the relevant tests and lint.
+   - Re-run the reproduction steps and confirm, when possible, that the defect is gone.
 
 # Output
 
 - Root cause of the defect.
-- What was changed to fix it and why it was chosen.
+- Candidate solutions considered and why the chosen one was selected over the alternatives.
+- What was changed to fix it.
 - How the fix was verified.
