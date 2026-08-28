@@ -38,7 +38,7 @@ If the defect is a Jira ticket:
 
 ## 2. Identify the Root Cause
 
-Follow the steps to identify the root cause:
+Work through these steps to identify the root cause:
 1. Reproduce the defect.
 2. Collect information (logs, stack traces, network requests, screenshots).
 3. Identify the root cause.
@@ -58,7 +58,7 @@ If the user declines the live approach, fall back to the reproduction steps in t
 
 ### Stop Gates
 
-Stop and report if any of the following is met:
+Stop and report if either of the following is met:
 - A fix already exists — summarize the root cause and the fix.
 - The defect is unrelated to the current repo — suggest the correct repo to investigate.
 
@@ -83,17 +83,16 @@ stall.
 
 ## 3. Figure Out the Fix
 
-Follow the steps to figure out the fix:
-1. List candidate solutions, choose one based on the following criteria:
-    1. Prefer general fixes that eliminate the underlying design flaw over narrow patches that 
-       address only the current case.
-    2. Among equally general options, choose the most straightforward fix that follows the original
-       design.
-2. Make the fix:
-   - Comment non-obvious logic; leave self-explanatory code uncommented.
+Work through these steps to figure out the fix:
+1. List candidate solutions and choose one based on the following criteria:
+   - Prefer general fixes that eliminate the underlying design flaw over narrow patches that
+     address only the current case.
+   - Among equally general options, choose the most straightforward fix that follows the original
+     design.
+2. Make the fix — comment non-obvious logic; leave self-explanatory code uncommented.
 3. Verify the fix:
-   1. Run the relevant tests and lint.
-   2. Re-run the reproduction steps and confirm, when possible, that the defect is gone.
+   - Run the relevant tests and lint.
+   - Re-run the reproduction steps and confirm, when possible, that the defect is gone.
 
 ## 4. Rubber Duck Review
 
