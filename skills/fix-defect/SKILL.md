@@ -42,9 +42,10 @@ If the defect is a Jira ticket:
 Work through these steps:
 1. Reproduce the defect.
 2. Collect information — logs, stack traces, network requests, screenshots.
-3. Identify the root cause.
+3. Explore code.
 
-**Reproduce before code analysis** — reproduction helps pinpoint the root cause efficiently.
+Remember to **Reproduce before exploring code** — reproduction quickly narrows down the problem
+and locates the relevant code, more efficiently and accurately than exploring code.
 
 ### Reproduce
 
@@ -84,7 +85,7 @@ stall.
 ## 3. Fix and Verify
 
 Work through these steps:
-1. Before making the fix, list candidate solutions and compare.
+1. Before making the fix, step back to think alternative solutions and compare.
 2. Choose the most appropriate one based on:
    - Prefer robust, maintainable fixes over quick-fixes.
    - Prefer fixes that follow the original design of the changing code.
