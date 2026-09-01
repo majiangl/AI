@@ -14,19 +14,19 @@ Stop and notify the user if any of the following are unmet:
 
 - **Design document** — a Confluence page URL or page ID, or a path to a Markdown file
   containing the design or specification to implement.
+- **Extra instructions** – optional extra instructions.
 
 # Process
 
 ## 1. Understand the Design
 
-> If the design is a Confluence page, convert it to Markdown first (e.g., with the 
-> `confluence-to-markdown` skill).
+> If the design is a Confluence page, convert it to Markdown first.
 
 Read the design document:
 
 1. Identify the affected components and the change required for each. A component is identified 
    either by physical location (e.g., repo/npm package) or ownership.
-2. Determine what should be implemented in this repo.
+2. Determine which of these changes should be implemented in this repo.
 
 ## 2. Plan the Implementation
 
@@ -41,12 +41,12 @@ Create a detailed implementation plan using a top-down approach:
 
 ## 3. Implement the Code
 
-- Handle interaction between internal components. Update call sites and imports when a shared 
+- Handle interactions between internal components. Update call sites and imports when a shared 
   interface or signature changes.
 - Handle edge cases. Cover null/empty inputs, boundary values, and failure paths (e.g., session 
   timeout, missing data).
-- Add unit tests for new code. Cover the happy path, edge cases, and error paths.
-- Add necessary comments. Explain non-obvious logic and business rules, not what the code 
+- Add unit tests for new code, covering the happy path, edge cases, and error paths.
+- Add necessary comments explaining non-obvious logic and business rules, not what the code 
   obviously does.
 
 ## 4. Rubber Duck Review
@@ -56,4 +56,4 @@ implementation plan and the code changes. Address any issues raised.
 
 # Output
 
-- Summary of the implementation, including what was changed and how it was verified.
+- Summary of the implementation, including what was changed.

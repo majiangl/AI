@@ -31,6 +31,7 @@ install.ps1   # Install script for Windows
 | Skill                  | Description                                                                                      | Status   |
 |------------------------|--------------------------------------------------------------------------------------------------|----------|
 | confluence-to-markdown | Converts a Confluence page to Markdown.                                                          | `Stable` |
+| figma                  | Use the Figma MCP server for Figma-driven implementation.                                        | `Beta`   |
 | fix-defect             | Fixes a defect tracked by a Jira ticket.                                                         | `Stable` |
 | implement-design       | Implements a feature from a design document referenced by a Confluence page or a Mark down file. | `Alpha`  |
 | polish-docs            | Polishes documents to ensure clear structure and fluent wording.                                 | `Stable` |
