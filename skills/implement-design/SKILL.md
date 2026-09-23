@@ -18,15 +18,15 @@ Stop and notify the user if any of the following are unmet:
 
 # Process
 
-## 1. Understand the Design
+## 1. Understand the Scope
 
 > If the design is a Confluence page, convert it to Markdown first.
 
-Read the design document:
+Review the design document and:
 
-1. Identify the affected components and the change required for each. A component is identified 
-   either by physical location (e.g., repo/npm package) or ownership.
-2. Determine which of these changes should be implemented in this repo.
+1. Identify the impacted components and the specific changes required for each. A component is 
+defined either by its physical location (e.g., repo/npm package) or by its owner.
+2. Determine which of these changes should be implemented in this repository.
 
 ## 2. Plan the Implementation
 

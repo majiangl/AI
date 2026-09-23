@@ -23,7 +23,7 @@ Stop and notify the user if any prerequisite is unmet:
 
 ## 1. Fetch the Page
 
-Call the Atlassian `getConfluencePage` tool with `contentFormat` set to **ADF** and `cloudId` 
+Call the Atlassian `getConfluencePage` tool with `contentFormat` set to **adf** and `cloudId` 
 set to the site hostname (extract from the page URL if given). If the `cloudId` is unknown or the 
 request fails, call `getAccessibleAtlassianResources` to list the available cloud IDs.
 
