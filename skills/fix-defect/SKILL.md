@@ -85,7 +85,7 @@ stall.
 ## 3. Fix and Verify
 
 Work through these steps:
-1. Before making the fix, step back to think alternative solutions and compare.
+1. Before making the fix, step back to consider alternative solutions and compare them.
 2. Choose the most appropriate one based on:
    - Prefer robust, maintainable fixes over quick-fixes.
    - Prefer fixes that follow the original design of the changing code.
