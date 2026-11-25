@@ -33,6 +33,9 @@ def decode_plantuml(encoded: str) -> str:
     result only when it actually looks like a PlantUML document, so sources that
     were stored raw are left untouched.
     """
+    # Some macros store the source URL-encoded and uncompressed.
+    if encoded.startswith(("%40startuml", "@startuml")):
+        return unquote(encoded)
     try:
         raw = zlib.decompress(base64.b64decode(encoded), -15).decode("utf-8")
     except Exception as exc:
@@ -269,6 +272,10 @@ def inline(nodes) -> str:
                 out.append(f"[{text}]({href})")
         elif t == "input" and n.attrs.get("type") == "checkbox":
             continue
+        elif n.dtype == "status":
+            label = _text(n).strip()
+            if label:
+                out.append(f"**`{label.upper()}`**")
         elif t in ("span", "u", "sub", "sup", "mark", "time"):
             out.append(inline(n.children))
         elif t == "input":
@@ -450,6 +457,14 @@ def extension_md(n: Node) -> str:
         name = (params.get("diagramName", {}).get("value", "")
                 or params.get("diagramDisplayName", {}).get("value", ""))
         return f"~~(drawio diagram: {name})~~" if name else "~~(drawio diagram)~~"
+    # Code Snippet macro: the code is in a parameter, not in the page body.
+    if key == "paste-code-macro":
+        body = params.get("__bodyContent", {}).get("value", "")
+        title = params.get("title", {}).get("value", "")
+        lang = params.get("language", {}).get("value", "")
+        fence = _safe_fence(body)
+        head = f"**{title}**\n\n" if title else ""
+        return f"{head}{fence}{lang}\n{body}\n{fence}"
     # Bodied macros wrap ordinary content, so render their children.
     if n.dtype == "bodied-extension":
         return blocks(n.children)
