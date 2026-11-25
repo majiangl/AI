@@ -170,6 +170,8 @@ TOC_KEYS = {"toc", "table-of-contents", "toc2", "pagetree"}
 # ---------------------------------------------------------------------------
 
 class Node:
+    """One HTML element; text nodes are plain str entries in children."""
+
     def __init__(self, tag, attrs=None, parent=None):
         self.tag = tag
         self.attrs = dict(attrs or {})
@@ -182,6 +184,8 @@ class Node:
 
 
 class _Builder(HTMLParser):
+    """Builds a Node tree from HTML; unclosed or mismatched tags are tolerated."""
+
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.root = Node("root")
@@ -197,6 +201,7 @@ class _Builder(HTMLParser):
         self.cur.children.append(Node(tag, attrs, self.cur))
 
     def handle_endtag(self, tag):
+        # Close the nearest open ancestor with this tag; ignore stray end tags.
         n = self.cur
         while n is not self.root and n.tag != tag:
             n = n.parent
@@ -208,6 +213,7 @@ class _Builder(HTMLParser):
 
 
 def parse(markup: str) -> Node:
+    """Parse an HTML string into a Node tree and return its root."""
     b = _Builder()
     b.feed(markup)
     b.close()
@@ -219,6 +225,7 @@ def parse(markup: str) -> Node:
 # ---------------------------------------------------------------------------
 
 def _wrap(text: str, mark: str) -> str:
+    """Wrap text in a Markdown mark (**, *, ~~), keeping surrounding spaces outside the mark."""
     core = text.strip()
     if not core:
         return text
@@ -228,13 +235,14 @@ def _wrap(text: str, mark: str) -> str:
 
 
 def inline(nodes) -> str:
+    """Convert inline nodes (text, emphasis, code, links) to a single Markdown string."""
     out = []
     for n in nodes:
         if isinstance(n, str):
             out.append(re.sub(r"\s+", " ", n))
             continue
         t = n.tag
-        warn_unknown(n)
+        out.append(warn_unknown(n))
         if n.dtype == "placeholder":
             continue
         if t == "br":
@@ -271,6 +279,7 @@ def inline(nodes) -> str:
 
 
 def _text(n) -> str:
+    """Return the plain text of a node and all its descendants."""
     if isinstance(n, str):
         return n
     return "".join(_text(c) for c in n.children)
@@ -285,11 +294,20 @@ KNOWN_TYPES = {"mention", "placeholder", "task-list", "task-item", "media-single
 _warned = set()
 
 
-def warn_unknown(n: "Node") -> None:
+def warn_unknown(n: "Node") -> str:
+    """Handle an unknown data-type; its content is still rendered as plain text.
+
+    Print a warning once per data-type, and return a placeholder to place where the element
+    occurs, so every occurrence is easy to find in the Markdown. Return "" for known types.
+    """
     dt = n.dtype
-    if dt and dt not in KNOWN_TYPES and not dt.startswith("panel") and dt not in _warned:
+    if not dt or dt in KNOWN_TYPES or dt.startswith("panel"):
+        return ""
+    message = f"UNSUPPORTED data-type: {dt!r} (rendered as plain content)"
+    if dt not in _warned:
         _warned.add(dt)
-        print(f"UNSUPPORTED data-type: {dt!r} (rendered as plain content)", file=sys.stderr)
+        print(message, file=sys.stderr)
+    return f"~~(unsupported data-type: {dt})~~"
 
 
 BLOCK_TAGS = {"p", "ul", "ol", "table", "pre", "div", "figure", "details", "blockquote",
@@ -320,8 +338,15 @@ def blocks(nodes) -> str:
 
 
 def block(n: Node) -> str:
+    """Convert one block-level node, preceded by a placeholder if its data-type is unknown."""
+    note = warn_unknown(n)
+    md = _block(n)
+    return f"{note}\n{md}" if note and md.strip() else md
+
+
+def _block(n: Node) -> str:
+    """Convert one block-level node to Markdown by dispatching on its tag."""
     t = n.tag
-    warn_unknown(n)
     if re.fullmatch(r"h[1-6]", t):
         return "#" * int(t[1]) + " " + _clean_inline(inline(n.children))
     if t == "p":
@@ -348,6 +373,7 @@ def block(n: Node) -> str:
 
 
 def quote(inner: str, label: str = "") -> str:
+    """Prefix every line with "> ", optionally starting with a bold label (used for panels)."""
     lines = inner.splitlines()
     if label:
         return f"> **{label}:**\n" + "\n".join(f"> {l}" if l else ">" for l in lines)
@@ -355,6 +381,7 @@ def quote(inner: str, label: str = "") -> str:
 
 
 def pre_md(n: Node) -> str:
+    """Convert <pre><code class="language-x"> to a fenced code block."""
     code = next((c for c in n.children if not isinstance(c, str) and c.tag == "code"), None)
     lang = ""
     if code is not None:
@@ -366,6 +393,7 @@ def pre_md(n: Node) -> str:
 
 
 def media_md(n: Node) -> str:
+    """Replace an image/media element with a placeholder; media is not downloaded."""
     def find(x):
         for c in x.children:
             if isinstance(c, str):
@@ -381,6 +409,7 @@ def media_md(n: Node) -> str:
 
 
 def details_md(n: Node) -> str:
+    """Convert an expand macro (<details>) to HTML comment markers around its content."""
     summary = next((c for c in n.children if not isinstance(c, str) and c.tag == "summary"), None)
     title = _clean_inline(inline(summary.children)) if summary else ""
     rest = [c for c in n.children if c is not summary]
@@ -390,6 +419,7 @@ def details_md(n: Node) -> str:
 
 
 def div_md(n: Node) -> str:
+    """Convert a <div> by its data-type: macro, panel, media, or plain container."""
     dt = n.dtype
     if dt in ("extension", "bodied-extension", "inline-extension"):
         return extension_md(n)
@@ -403,20 +433,24 @@ def div_md(n: Node) -> str:
 
 
 def extension_md(n: Node) -> str:
+    """Convert a Confluence macro. Unknown macros become a placeholder and a stderr warning."""
     key = n.attrs.get("data-extension-key", "")
     try:
         params = json.loads(n.attrs.get("data-parameters", "{}") or "{}").get("macroParams", {})
     except json.JSONDecodeError:
         params = {}
+    # Table-of-contents macros carry no content of their own.
     if key in TOC_KEYS or key.startswith("toc-"):
         return ""
     if "plantuml" in key.lower() or "puml" in key.lower():
         enc = params.get("data", {}).get("value", "")
         return f"```plantuml\n{decode_plantuml(enc)}\n```" if enc else ""
+    # draw.io data is an attachment, not in the page body; leave a placeholder to resolve later.
     if "drawio" in key.lower():
         name = (params.get("diagramName", {}).get("value", "")
                 or params.get("diagramDisplayName", {}).get("value", ""))
         return f"~~(drawio diagram: {name})~~" if name else "~~(drawio diagram)~~"
+    # Bodied macros wrap ordinary content, so render their children.
     if n.dtype == "bodied-extension":
         return blocks(n.children)
     print(f"UNSUPPORTED extension: {key!r}", file=sys.stderr)
@@ -444,10 +478,12 @@ def _item_body(li: Node, indent: int):
 
 
 def textwrap_indent(s: str, prefix: str) -> str:
+    """Indent every non-empty line of s with prefix."""
     return "\n".join(prefix + l if l else l for l in s.splitlines())
 
 
 def list_md(n: Node, indent: int = 0) -> str:
+    """Convert <ul>/<ol> to a Markdown list, nesting by two spaces per level."""
     ordered = n.tag == "ol"
     start = int(n.attrs.get("start", 1) or 1) if ordered else 1
     lines = []
@@ -460,6 +496,7 @@ def list_md(n: Node, indent: int = 0) -> str:
 
 
 def task_list(n: Node, indent: int = 0) -> str:
+    """Convert a Confluence task list to "- [ ]" / "- [x]" items."""
     lines = []
     for li in (c for c in n.children if not isinstance(c, str) and c.tag in ("li", "div")):
         box = next((c for c in li.children if not isinstance(c, str) and c.tag == "input"), None)
@@ -476,14 +513,25 @@ def task_list(n: Node, indent: int = 0) -> str:
 # Tables
 # ---------------------------------------------------------------------------
 
+def _pre_in_cell(m: "re.Match") -> str:
+    """Fenced code does not render inside a table cell, so emit an HTML <pre> block instead."""
+    code = m.group(1).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    # \0 stands in for a line break so _cell does not collapse or re-escape it.
+    return "<pre><code>" + code.replace("|", "&#124;").replace("\n", "\0") + "</code></pre>"
+
+
 def _cell(c: Node) -> str:
+    """Render a table cell on one line: blocks are joined with <br>, pipes are escaped."""
     s = blocks(c.children)
+    # Must run before newlines become <br>, while the fence markers are still intact.
+    s = re.sub(r"```\w*\n(.*?)\n```", _pre_in_cell, s, flags=re.S)
     s = re.sub(r"\n{2,}", "\n", s)
-    s = s.replace("\n", "<br>").replace("|", "\\|")
+    s = s.replace("\n", "<br>").replace("|", "\\|").replace("\0", "<br>")
     return s.strip()
 
 
 def table_md(n: Node) -> str:
+    """Convert a <table> to a Markdown table; a header row is empty unless the first row is all <th>."""
     rows = []
 
     def walk(x):
@@ -535,6 +583,7 @@ def _find_page(obj):
 
 
 def load(path: str, title_arg: str):
+    """Return (title, html) from a JSON page envelope or a plain HTML file."""
     raw = Path(path).read_text(encoding="utf-8")
     if not raw.lstrip().startswith(("{", "[")):
         return title_arg, raw
@@ -552,10 +601,12 @@ def load(path: str, title_arg: str):
 
 
 def slugify(title: str) -> str:
+    """Turn a page title into a kebab-case file name."""
     return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-") or "page"
 
 
 def main() -> None:
+    """Parse arguments, convert the page, and write the Markdown file."""
     args = sys.argv[1:]
     opts = {"-o": "", "--output": "", "--title": ""}
     for flag in list(opts):
