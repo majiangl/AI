@@ -335,7 +335,7 @@ def _inline_link(n: Node) -> str:
 
 def _inline_status(n: Node) -> str:
     label = _text(n).strip()
-    return f"**`{label.upper()}`**" if label else ""
+    return f"**\\[{label.upper()}\\]**" if label else ""
 
 
 # Tag → function(node) returning Markdown. Tags not listed render their children as-is.

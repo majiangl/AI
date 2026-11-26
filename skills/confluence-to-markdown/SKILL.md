@@ -8,12 +8,12 @@ description: Use when asked to read, understand, or convert a Confluence page id
 
 Prefer this skill to a direct Confluence fetch: it preserves content that a direct read can miss,
 such as macros. The Markdown keeps tables, task lists, code blocks, and links. PlantUML diagrams
-become `plantuml` code blocks. Media, such as images, and other non-text extensions become inline
-placeholders.
+become `plantuml` code blocks. Media (such as images) and other non-text extensions are omitted
+and replaced with inline placeholders.
 
 ## Usage
 
-```
+```text
 /confluence-to-markdown <PAGE> [OPTIONS]
 ```
 
@@ -36,8 +36,8 @@ Stop and notify the user if any prerequisite is unmet:
 
 ### 1. Export the page
 
-Fetch the full page, which includes the title and macro data, and save it to the session's
-temporary folder as `<tmp>/page.json`.
+Fetch the full page, including the title and macro data, and save it as `<tmp>/page.json` in the
+session's temporary folder.
 
 #### Fetch with a page URL
 
@@ -65,12 +65,13 @@ for the full URL.
 ### 2. Convert to Markdown
 
 Run [convert_html.py](./convert_html.py) from this skill's base directory:
-- `<output_md_path>` must be a file path, not a directory.
-- If the user gave a directory, build the file name from the `title` in the JSON.
 
 ```bash
 python3 <skill-base-dir>/convert_html.py <tmp>/page.json -o <output_md_path>
 ```
+
+`<output_md_path>` must be a file path, not a directory. If the user gave a directory, build the
+file name from the `title` in the JSON.
 
 If the conversion reports any `UNSUPPORTED` warnings:
 
@@ -95,5 +96,5 @@ Rerun the linter until it reports no errors.
 Report the path to the Markdown file, then summarize:
 
 - Omitted content left as placeholders.
-- Logic patched during conversion.
-- Fix-ups made during linting.
+- Logic patched during conversion to support unsupported macros and data types.
+- Fixes made during linting.
