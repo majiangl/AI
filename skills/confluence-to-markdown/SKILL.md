@@ -30,14 +30,13 @@ Stop and notify the user if any prerequisite is unmet:
 - [ ] The Atlassian Teamwork Graph CLI, `twg`, is available. To install or set it up, follow
       <https://teamwork-graph.atlassian.com/cli/AGENTS.md>.
 - [ ] `python3` is available.
-- [ ] `npx` is available.
 
 ## Conversion
 
 ### 1. Export the page
 
-Fetch the full page, including the title and macro data, and save it as `<tmp>/page.json` in the
-session's temporary folder.
+Fetch the full page, including the title and macro data, and save it as `<tmp>/page.json`, where
+`<tmp>` is the session's temporary folder.
 
 #### Fetch with a page URL
 
@@ -47,13 +46,13 @@ twg confluence content get <page-url> --detail full --format html -o json --outp
 
 #### Fetch with a page ID
 
-A bare page ID does not carry a site. List the Confluence sites available to the user:
+A bare page ID does not identify a site. List the Confluence sites the user can access:
 
 ```bash
 twg access --product confluence.ondemand -o json
 ```
 
-Then try each site, one by one, until one succeeds:
+Then try each site in turn until one succeeds:
 
 ```bash
 twg confluence content get <page-id> --site <name> --detail full --format html -o json --output-file <tmp>/page.json
@@ -81,20 +80,9 @@ If the conversion reports any `UNSUPPORTED` warnings:
 
 Do **NOT** modify the bundled script while converting a page.
 
-### 3. Verify
-
-Lint the Markdown and fix all issues found:
-
-```bash
-npx -y markdownlint-cli2 <output_md_path>
-```
-
-Rerun the linter until it reports no errors.
-
 ## Output
 
 Report the path to the Markdown file, then summarize:
 
-- Omitted content left as placeholders.
-- Logic patched during conversion to support unsupported macros and data types.
-- Fixes made during linting.
+- Content omitted because Markdown cannot express it.
+- Any logic you patched to support unsupported macros or data types.
