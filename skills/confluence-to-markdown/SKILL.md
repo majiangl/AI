@@ -19,16 +19,9 @@ placeholders.
 
 `<PAGE>` is a full Confluence URL or a page ID (for example `6503628991`).
 
-| Option                | Description                                                                               |
-| --------------------- | ----------------------------------------------------------------------------------------- |
-| `-o, --output <path>` | Write the Markdown to this path. Resolve a relative path from the current workspace root. |
-
-If the user asks to save the file to the workspace root, or wants it in the workspace without naming
-a location, pass `-o <workspace-root>/<kebab-case-page-title>.md` with the absolute workspace root
-path.
-
-Without `-o`, the converter writes `<kebab-case-page-title>.md` in the temporary folder, next to
-its input file.
+| Option                | Description                                                                                                                                                                                                                                         |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-o, --output <path>` | Write the Markdown to this path. Resolve a relative path from the current workspace root. If the path is a directory, write `<kebab-case-page-title>.md` inside it. If omitted, write next to the exported JSON file. |
 
 ## Prerequisites
 
@@ -37,29 +30,46 @@ Stop and notify the user if any prerequisite is unmet:
 - [ ] The Atlassian Teamwork Graph CLI, `twg`, is available. To install or set it up, follow
       <https://teamwork-graph.atlassian.com/cli/AGENTS.md>.
 - [ ] `python3` is available.
+- [ ] `npx` is available.
 
 ## Conversion
 
 ### 1. Export the page
 
-Save the page to a file in the temporary folder. `<tmp>` is the temporary directory that the
-harness designates for the session:
+Fetch the full page, which includes the title and macro data, and save it to the session's
+temporary folder as `<tmp>/page.json`.
+
+#### Fetch with a page URL
 
 ```bash
-twg confluence content get <page-url-or-id> --detail full --format html -o json --output-file <tmp>/page.json
+twg confluence content get <page-url> --detail full --format html -o json --output-file <tmp>/page.json
 ```
 
-- **`--detail full --format html`**: summaries and outlines have no body, and the Markdown format
-  replaces macros such as PlantUML with placeholders. Only the full HTML keeps the macro data.
-- **`-o json`**: the HTML body alone does not include the page title. The JSON envelope carries the
-  `title` next to the body (`body.value`), so the converter gets both from one file.
+#### Fetch with a page ID
+
+A bare page ID does not carry a site. List the Confluence sites available to the user:
+
+```bash
+twg access --product confluence.ondemand -o json
+```
+
+Then try each site, one by one, until one succeeds:
+
+```bash
+twg confluence content get <page-id> --site <name> --detail full --format html -o json --output-file <tmp>/page.json
+```
+
+If every site returns 404, tell the user the page was not found on any accessible site and ask
+for the full URL.
 
 ### 2. Convert to Markdown
 
-Run [convert_html.py](./convert_html.py) on the exported JSON file:
+Run [convert_html.py](./convert_html.py) from this skill's base directory:
+- `<output_md_path>` must be a file path, not a directory.
+- If the user gave a directory, build the file name from the `title` in the JSON.
 
 ```bash
-python3 <path-to>/convert_html.py <tmp>/page.json -o <output_md_path>
+python3 <skill-base-dir>/convert_html.py <tmp>/page.json -o <output_md_path>
 ```
 
 If the conversion reports any `UNSUPPORTED` warnings:
@@ -68,15 +78,22 @@ If the conversion reports any `UNSUPPORTED` warnings:
 2. Copy the script and patch the copy to handle those node types.
 3. Rerun the conversion with the patched copy.
 
-Do **NOT** modify the bundled script.
+Do **NOT** modify the bundled script while converting a page.
 
-### 3. Review the Markdown
+### 3. Verify
 
-Review the generated Markdown and resolve every checklist item:
+Lint the Markdown and fix all issues found:
 
-- [ ] **Broken formatting** — fix syntax errors and broken formatting introduced during conversion.
+```bash
+npx -y markdownlint-cli2 <output_md_path>
+```
+
+Rerun the linter until it reports no errors.
 
 ## Output
 
-Report the path to the Markdown file. Then briefly note any unconverted placeholders, fix-ups, and
-patched logic.
+Report the path to the Markdown file, then summarize:
+
+- Omitted content left as placeholders.
+- Logic patched during conversion.
+- Fix-ups made during linting.
