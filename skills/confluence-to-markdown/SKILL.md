@@ -82,7 +82,7 @@ Do **NOT** modify the bundled script while converting a page.
 
 ## Output
 
-Report the path to the Markdown file, then summarize:
+Report the path to the Markdown file. Then summarize the following content (skip if none):
 
-- Content omitted because Markdown cannot express it.
-- Any logic you patched to support unsupported macros or data types.
+- Content omitted, such as Media and non-text extensions.
+- Logic patched to process unsupported macros or data types.
